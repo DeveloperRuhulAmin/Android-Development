@@ -1,0 +1,13 @@
+ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (networkInfo!=null && networkInfo.isConnected()){
+
+            Toast.makeText(MainActivity.this, "Network Connected!!", Toast.LENGTH_SHORT).show();
+
+        }
+        else {
+
+            Toast.makeText(MainActivity.this, "Please, Connect Internet!", Toast.LENGTH_SHORT).show();
+
+        }
