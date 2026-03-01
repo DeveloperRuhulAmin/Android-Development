@@ -1,0 +1,1 @@
+startActivity(new Intent(MainActivity.this, SecondActivity.class));
