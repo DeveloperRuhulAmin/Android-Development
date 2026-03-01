@@ -1,0 +1,30 @@
+getOnBackPressedDispatcher().addCallback(MainActivity.this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("This is title")
+                        .setMessage("This is message")
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setPositiveButton("Yes Exit", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                finishAndRemoveTask();
+                            }
+                        })
+                        .setNeutralButton("No Thanks", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+
+            }
+        });
