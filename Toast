@@ -1,1 +1,7 @@
 Toast.makeText(MainActivity.this, "Network Connected!!", Toast.LENGTH_SHORT).show();
+
+
+
+private void showToast(String myString){
+        Toast.makeText(MainActivity.this, ""+myString, Toast.LENGTH_SHORT).show();
+    }
