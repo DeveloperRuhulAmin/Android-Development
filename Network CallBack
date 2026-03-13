@@ -1,0 +1,38 @@
+ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkRequest networkRequest = new NetworkRequest.Builder().build();
+
+        connectivityManager.registerNetworkCallback(networkRequest,
+                new ConnectivityManager.NetworkCallback() {
+
+                    @Override
+                    public void onAvailable(Network network) {
+
+                        runOnUiThread(() -> {
+
+                            showToast("Network Connected!!");
+
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.add(R.id.frameLayout, new HomeFragment());
+                            fragmentTransaction.commit();
+
+                        });
+                    }
+
+                    @Override
+                    public void onLost(Network network) {
+
+                        runOnUiThread(() -> {
+
+                            showToast("Please, Connect Internet!");
+
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.replace(R.id.frameLayout, new NoInternetFragment());
+                            fragmentTransaction.commit();
+
+                        });
+                    }
+                });
