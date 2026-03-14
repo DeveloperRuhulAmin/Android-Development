@@ -1,0 +1,75 @@
+private void requestServer(){
+
+        ServerRequest.getLevels(LessonActivity.this, new ServerRequest.VolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject result) {
+
+
+                Log.d("serverRes", result.toString());
+
+                try {
+
+                    JSONArray lessonsArray = result.getJSONArray("lessons");
+
+                    for ( int i=0; i<lessonsArray.length(); i++ ){
+
+                        JSONObject lessonsObject = lessonsArray.getJSONObject(i);
+
+                        String serverLessonsID = String.valueOf(lessonsObject.getInt("lessons_id"));
+                        String lessons_id = getIntent().getStringExtra("lessons_id");
+
+                        if ( serverLessonsID.equals(lessons_id) ){
+
+                            JSONArray lessonArray = lessonsObject.getJSONArray("lesson");
+                            Log.d("lessonArray", lessonArray.toString());
+
+                            for ( int j=0; j<lessonsArray.length(); j++ ){
+
+                                JSONObject lessonObject = lessonArray.getJSONObject(j);
+
+                                String structure = lessonObject.getString("structure");
+                                String structure_bn = lessonObject.getString("structure_bn");
+                                String explanation = lessonObject.getString("explanation");
+                                String example_en = lessonObject.getString("example_en");
+                                String example_bn = lessonObject.getString("example_bn");
+
+                                HashMap<String,String> hashMap = new HashMap<>();
+
+                                hashMap.put("structure", structure);
+                                hashMap.put("structure_bn", structure_bn);
+                                hashMap.put("explanation", explanation);
+                                hashMap.put("example_en", example_en);
+                                hashMap.put("example_bn", example_bn);
+
+                                arrayList.add(hashMap);
+
+                            }
+
+                        }
+
+
+                    }
+
+
+
+
+
+                } catch (JSONException e) {
+
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+                Log.d("serverError", error);
+
+
+
+            }
+        });
+
+
+    }
