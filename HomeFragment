@@ -1,0 +1,207 @@
+package com.ruhulcreative.englora;
+
+import static android.view.View.GONE;
+
+import android.content.Intent;
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class HomeFragment extends Fragment {
+
+    RecyclerView recyclerView;
+    TextView header, currentLevel;
+    HashMap<String,String> hashMap;
+    ArrayList<HashMap<String,String>> arrayList = new ArrayList<>();
+
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        View myView = inflater.inflate(R.layout.fragment_home, container, false);
+
+        recyclerView = myView.findViewById(R.id.recyclerView);
+        header = myView.findViewById(R.id.header);
+        currentLevel = myView.findViewById(R.id.currentLevel);
+
+        requestServer();
+
+
+        MyAdapter adapter = new MyAdapter();
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+
+
+
+        return myView;
+    }
+    //----------------------------onCreate End------------------------------------------
+
+
+
+
+
+
+
+
+
+
+    //------------------------------MyAdapter Start----------------------------------------
+
+    class MyAdapter extends RecyclerView.Adapter <MyAdapter.myViewHolder>{
+
+        @NonNull
+        @Override
+        public myViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+            LayoutInflater inflater = getLayoutInflater();
+            View myView = inflater.inflate(R.layout.itemhome, parent, false);
+
+            return new myViewHolder(myView);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull myViewHolder holder, int position) {
+
+
+
+            HashMap<String,String> hashMap = arrayList.get(position);
+
+            String level_id = hashMap.get("level_id");
+            String title = hashMap.get("title");
+
+            holder.itemLevel.setText("Level - "+level_id);
+            holder.itemDes.setText(title);
+
+
+
+            holder.itemView.setAnimation(AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in));
+            holder.homeItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Toast.makeText(getContext(), "Hello!!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getContext(), LessonActivity.class);
+                    intent.putExtra("level_id", level_id);
+                    intent.putExtra("lesson_header", title);
+                    startActivity(intent);
+
+
+                }
+            });
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return arrayList.size();
+        }
+
+        class myViewHolder extends RecyclerView.ViewHolder{
+
+            TextView itemDes, itemLevel;
+            CardView homeItem;
+
+            public myViewHolder(@NonNull View itemView) {
+                super(itemView);
+
+                itemDes = itemView.findViewById(R.id.itemDes);
+                itemLevel = itemView.findViewById(R.id.itemLevel);
+                homeItem = itemView.findViewById(R.id.homeItem);
+
+            }
+        }
+    }
+
+
+    //-------------------------------MyAdapter End----------------------------------------------
+
+
+
+    //-----------------------------requestServer Start------------------------------------------------
+    private void requestServer(){
+
+        ServerRequest.getLevels(getContext(), new ServerRequest.VolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject result) {
+
+                currentLevel.setVisibility(GONE);
+                Log.d("serverRes", result.toString());
+
+                try {
+
+                    JSONArray jsonArray = result.getJSONArray("levels");
+
+                    for (int i=0; i<jsonArray.length(); i++){
+
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        int level_id = jsonObject.getInt("level_id");
+                        String title = jsonObject.getString("title");
+
+                        hashMap = new HashMap<>();
+                        hashMap.put("level_id", String.valueOf(level_id));
+                        hashMap.put("title", title);
+                        arrayList.add(hashMap);
+
+                    }
+
+
+
+
+
+                } catch (JSONException e) {
+
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+                Log.d("serverError", error);
+
+
+
+            }
+        });
+
+
+    }
+
+
+    //---------------------------------requestServer End--------------------------------------------
+
+
+
+}
