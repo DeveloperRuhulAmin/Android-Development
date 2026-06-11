@@ -1,0 +1,117 @@
+package com.ruhulcreative.englora;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
+import static androidx.lifecycle.LifecycleKt.getCoroutineScope;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.airbnb.lottie.LottieAnimationView;
+import com.rajat.pdfviewer.HeaderData;
+import com.rajat.pdfviewer.PdfRendererView;
+import com.rajat.pdfviewer.util.CacheStrategy;
+
+public class PdfViewActivity extends AppCompatActivity {
+
+    TextView headerPdfName;
+    ImageView back;
+    LinearLayout layNoInternet;
+    PdfRendererView pdfView;
+    LottieAnimationView lottieAnimationView;
+    Handler handler;
+    public static String PDF_URL = "";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_pdf_view);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+
+        headerPdfName = findViewById(R.id.headerPdfName);
+        layNoInternet = findViewById(R.id.layNoInternet);
+        back = findViewById(R.id.back);
+        pdfView = findViewById(R.id.pdfView);
+        lottieAnimationView = findViewById(R.id.lottieAnimationView);
+
+
+        Log.d("pdfUrl", PDF_URL);
+
+
+        handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                pdfView.setVisibility(VISIBLE);
+                layNoInternet.setVisibility(GONE);
+
+                String pdfName = getIntent().getStringExtra("pdf_name");
+                headerPdfName.setText(pdfName);
+
+
+                pdfView.initWithUrl(
+                        PDF_URL,
+                        new HeaderData(),
+                        getCoroutineScope(getLifecycle()),
+                        getLifecycle(),
+                        CacheStrategy.MAXIMIZE_PERFORMANCE
+                );
+
+            }
+        }, 2000);
+        
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent home = new Intent(PdfViewActivity.this, PdfListActivity.class);
+                home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(home);
+                finish();
+
+            }
+        });
+
+        getOnBackPressedDispatcher().addCallback(PdfViewActivity.this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+
+                Intent home = new Intent(PdfViewActivity.this, PdfListActivity.class);
+                home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(home);
+                finish();
+
+            }
+        });
+
+
+    }
+
+
+
+
+
+
+
+}
