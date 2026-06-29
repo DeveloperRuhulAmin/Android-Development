@@ -96,12 +96,7 @@ private void showRewardedAd() {
 
                             CoinManager.addCoin(EarnCoin.this, rewardAmount);
 
-                            int currentCount = CoinManager.getHourlyAdCount(EarnCoin.this);
-                            CoinManager.setHourlyAdCount(EarnCoin.this, currentCount + 1);
-                            CoinManager.setLastAdTime(EarnCoin.this, System.currentTimeMillis());
-                            updateAdStatus();
 
-                            showTotalCoin();
 
                             Toast.makeText(
                                     EarnCoin.this,
